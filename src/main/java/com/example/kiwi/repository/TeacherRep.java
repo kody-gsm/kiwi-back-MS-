@@ -4,6 +4,6 @@ import com.example.kiwi.domain.teacher.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("TeacherRep")
 public interface TeacherRep extends JpaRepository<Teacher, Long> {
 }

@@ -1,5 +1,6 @@
 package com.example.kiwi.controller;
 
+import com.example.kiwi.domain.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @Transactional
 @RequiredArgsConstructor
 public class MainController {
-
+    User user = new User();
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody String username, @RequestBody String password) {
+        String name = user.getUsername();
+        String pass = user.getPassword();
 
+        return ResponseEntity.ok("Hello " + username);
     }
 }

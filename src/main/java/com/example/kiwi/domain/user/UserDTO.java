@@ -21,6 +21,10 @@ public class UserDTO {
         this.ID = user.getId();
         this.gender = user.getGender();
         this.email = user.getEmail();
+        this.late = user.getLate();
+        this.recognized = user.getRecognized();
+        this.truancy = user.getTruancy();
+        this.attend = user.getAttend();
     }
 
     @Builder

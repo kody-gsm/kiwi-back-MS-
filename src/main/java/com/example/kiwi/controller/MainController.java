@@ -18,15 +18,16 @@ public class MainController {
     private final UserSer userSer;
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
-        User user = new User();
-        String name = userDTO.getUsername();
-        String pass = userDTO.getPassword();
-
-        if(user.getUsername().equals(name) && user.getPassword().equals(pass)) {
-            return ResponseEntity.ok("Hello "+name);
+        String username = userDTO.getUsername();
+        if(userSer.login(username, userDTO.getPassword())) {
+            return ResponseEntity.ok("Hello " + username);
         }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username or password");
+        else if (username == null || userSer.namecheck(username)/*namecheck는 null이면 ture를 반환한다.*/) {//이름이 그냥 null이거나 DB에 없으면 나오는 거
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이름이 없습니다.");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 다릅니다.");
+        }
     }
 
     @PostMapping("/sign-up")
@@ -42,5 +43,10 @@ public class MainController {
         userSer.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/addlate")
+    public void addlate(@RequestBody Short id){
+        userSer.addlate(id);
     }
 }

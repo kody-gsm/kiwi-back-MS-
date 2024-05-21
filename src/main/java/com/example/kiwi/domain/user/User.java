@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Short id;
+    private Short user_id;
 
     @Column(nullable = false, length = 5)
     private String username;
@@ -28,17 +28,9 @@ public class User {
     @Column(nullable = false, length = 7)
     private String email;
 
-    private Short late;
-
-    private Short recognized;
-
-    private Short truancy;
-
-    private Short attend;
-
     @Builder
     public User(Short ID,String username, String password, Boolean gender, String email) {
-        this.id = ID;
+        this.user_id = ID;
         this.username = username;
         this.password = password;
         this.gender = gender;

@@ -22,8 +22,8 @@ public class UserSer {
         return userMapper.getpass(name);
     }
 
-    public String getname(String name){
-        return userRep.findbyUsername(name);
+    public User getname(String name){
+        return userRep.findByUsername(name);
     }
 
     public boolean namecheck(String name){

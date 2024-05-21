@@ -7,40 +7,24 @@ import lombok.Getter;
 public class UserDTO {
     private String username;
     private String password;
-    private Short ID;
+    private Short user_id;
     private Boolean gender;
     private String email;
-    private Short late;
-    private Short recognized;
-    private Short truancy;
-    private Short attend;
 
     public UserDTO(User user){
         this.username = user.getUsername();
         this.password = user.getPassword();
-        this.ID = user.getId();
+        this.user_id = user.getUser_id();
         this.gender = user.getGender();
         this.email = user.getEmail();
-        this.late = user.getLate();
-        this.recognized = user.getRecognized();
-        this.truancy = user.getTruancy();
-        this.attend = user.getAttend();
     }
 
     @Builder
     public UserDTO(String username, String password, Short ID, Boolean gender,String email) {
         this.username = username;
         this.password = password;
-        this.ID = ID;
+        this.user_id = ID;
         this.gender = gender;
         this.email = email;
-    }
-
-    @Builder
-    public void Check(Short late,Short recognized,Short truancy,Short attend){
-        this.late = late;
-        this.recognized = recognized;
-        this.truancy = truancy;
-        this.attend = attend;
     }
 }

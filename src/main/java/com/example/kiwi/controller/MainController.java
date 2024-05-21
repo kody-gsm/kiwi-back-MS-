@@ -35,7 +35,7 @@ public class MainController {
         User user = User.builder()
                 .username(userDTO.getUsername())
                 .password(userDTO.getPassword())
-                .ID(userDTO.getID())
+                .ID(userDTO.getUser_id())
                 .email(userDTO.getEmail())
                 .gender(userDTO.getGender())
                 .build();

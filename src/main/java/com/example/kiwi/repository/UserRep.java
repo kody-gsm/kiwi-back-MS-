@@ -4,7 +4,7 @@ import com.example.kiwi.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository("UserRep")
+@Repository
 public interface UserRep extends JpaRepository<User, Long> {
-    String findbyUsername(String username);
+    User findByUsername(String username);
 }

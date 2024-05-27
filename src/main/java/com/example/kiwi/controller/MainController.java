@@ -2,6 +2,7 @@ package com.example.kiwi.controller;
 
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.domain.user.UserDTO;
+import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.service.UserSer;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,15 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class MainController {
     private final UserSer userSer;
+    private final UserRep userRep;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         if(userSer.login(username, userDTO.getPassword())) {
             return ResponseEntity.ok("Hello " + username);
         }
-        else if (username == null || userSer.namecheck(username)/*namecheck는 null이면 ture를 반환한다.*/) {//이름이 그냥 null이거나 DB에 없으면 나오는 거
+        else if (username == null || userRep.findByUsername(username) == null) {//이름이 그냥 null이거나 DB에 없으면 나오는 거
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이름이 없습니다.");
         }
         else {
@@ -40,7 +43,7 @@ public class MainController {
                     .email(userDTO.getEmail())
                     .gender(userDTO.getGender())
                     .build();
-            userSer.save(user);
+            userRep.save(user);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         }
@@ -67,7 +70,17 @@ public class MainController {
         String username = userDTO.getUsername();
         String e_mail = userDTO.getEmail();
         String password = userDTO.getPassword();
+        String old_password = userSer.getpass(username, e_mail);
 
-        return ResponseEntity.ok("change password");
+        if(password.equals(old_password)) {
+            User user = User.builder()
+                    .password(new_password)
+                    .build();
+            userRep.save(user);
+            return ResponseEntity.ok("change password");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Not equals password");
+        }
     }
 }

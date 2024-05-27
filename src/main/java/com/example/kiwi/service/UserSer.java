@@ -14,24 +14,8 @@ public class UserSer {
     private final UserRep userRep;
     private final UserMapper userMapper;
 
-    public void save(User user) {
-        userRep.save(user);
-    }
-
-    public String getpass(String name){
-        return userMapper.getpass(name);
-    }
-
     public String getpass(String name, String email){
         return userMapper.getpass(name, email);
-    }
-
-    public User getname(String name){
-        return userRep.findByUsername(name);
-    }
-
-    public boolean namecheck(String name){
-        return getname(name) == null;
     }
 
     public boolean login(String name, String password) {

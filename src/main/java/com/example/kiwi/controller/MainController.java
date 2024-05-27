@@ -32,21 +32,42 @@ public class MainController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@RequestBody UserDTO userDTO) {
-        User user = User.builder()
-                .username(userDTO.getUsername())
-                .password(userDTO.getPassword())
-                .ID(userDTO.getUser_id())
-                .email(userDTO.getEmail())
-                .gender(userDTO.getGender())
-                .build();
+        if(userDTO != null) {
+            User user = User.builder()
+                    .username(userDTO.getUsername())
+                    .password(userDTO.getPassword())
+                    .ID(userDTO.getUser_id())
+                    .email(userDTO.getEmail())
+                    .gender(userDTO.getGender())
+                    .build();
+            userSer.save(user);
 
-        userSer.save(user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("값이 없는게 있습니다.");
+        }
     }
 
     @PostMapping("/addlate")
     public void addlate(@RequestBody Short id){
         userSer.addlate(id);
+    }
+    
+    @PostMapping("/PW-check")
+    public ResponseEntity<?> checkPassword(@RequestBody UserDTO userDTO) {
+        String username = userDTO.getUsername();
+        String e_mail = userDTO.getEmail();
+
+        return ResponseEntity.ok(userSer.getpass(username, e_mail));
+    }
+
+    @PostMapping("/PW-check/change")
+    public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password) {
+        String username = userDTO.getUsername();
+        String e_mail = userDTO.getEmail();
+        String password = userDTO.getPassword();
+
+        return ResponseEntity.ok("change password");
     }
 }

@@ -22,6 +22,10 @@ public class UserSer {
         return userMapper.getpass(name);
     }
 
+    public String getpass(String name, String email){
+        return userMapper.getpass(name, email);
+    }
+
     public User getname(String name){
         return userRep.findByUsername(name);
     }

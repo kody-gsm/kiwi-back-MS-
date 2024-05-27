@@ -15,7 +15,7 @@ public class Attendance {
     @Id
     @OneToOne
     @JoinColumn(name = "user_id")
-    private User attendance_id;
+    private User user;
 
     private Short etc_absent;
     private Short absent;
@@ -33,8 +33,7 @@ public class Attendance {
     private Short dise_leave;
 
     @Builder
-    public Attendance(User attendance_id, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave){
-        this.attendance_id = attendance_id;
+    public Attendance(Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave){
         this.etc_absent = etc_absent;
         this.absent = absent;
         this.reco_absent = reco_absent;

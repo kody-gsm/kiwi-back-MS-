@@ -68,9 +68,9 @@ public class MainController {
         message.setTo(e_mail);
         message.setSubject("KIWI에서 비밀번호와 관련된 메일입니다.");
         if (userSer.getpass(username,e_mail) == null)
-            message.setText("비밀번호가 없습니다. 문제가 생긴 가능성이 있으니 KIWI관련자에게 연락주세요. \n담당자:진건희");
+            message.setText("비밀번호가 없습니다. 문제가 생긴 가능성이 있으니 KIWI관련자에게 연락주세요.\n담당자:진건희");
         else
-            message.setText("당신의 비밀번호는 "+userSer.getpass(username,e_mail)+" 입니다. \n잊어버리지 않게 조심해주세요.");
+            message.setText("당신의 비밀번호는 "+userSer.getpass(username,e_mail)+"입니다.\n잊어버리지 않게 조심해주세요.");
 
         return ResponseEntity.ok(userSer.getpass(username, e_mail));
     }

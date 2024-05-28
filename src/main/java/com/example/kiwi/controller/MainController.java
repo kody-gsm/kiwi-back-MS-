@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.*;
 public class MainController {
     private final UserSer userSer;
     private final UserRep userRep;
+    private final JavaMailSenderImpl mailSender;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
+
         if(userSer.login(username, userDTO.getPassword())) {
             return ResponseEntity.ok("Hello " + username);
         }
@@ -62,17 +65,24 @@ public class MainController {
     public ResponseEntity<?> checkPassword(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         String e_mail = userDTO.getEmail();
+        String password = userSer.getpass(username,e_mail);
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("s23001@gsm.hs.kr");
         message.setTo(e_mail);
         message.setSubject("KIWI에서 비밀번호와 관련된 메일입니다.");
-        if (userSer.getpass(username,e_mail) == null)
+        if (password == null)
             message.setText("비밀번호가 없습니다. 문제가 생긴 가능성이 있으니 KIWI관련자에게 연락주세요.\n담당자:진건희");
         else
-            message.setText("당신의 비밀번호는 "+userSer.getpass(username,e_mail)+"입니다.\n잊어버리지 않게 조심해주세요.");
+            message.setText("사용자님의 비밀번호는 '"+password+"' 입니다.\n잊어버리지 않게 조심해주세요.");
 
-        return ResponseEntity.ok(userSer.getpass(username, e_mail));
+        try {
+            mailSender.send(message);
+            return ResponseEntity.ok("good");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("bad");
+        }
     }
 
     @PostMapping("/PW-check/change")

@@ -9,8 +9,8 @@ public interface UserMapper {
     @Select("SELECT pass FROM user WHERE name = #{name}")
     String getpass(String name);
 
-    @Update("UPDATE user SET late + 1 WHERE ID = #{ID}")
-    void addlate(short id);
+    @Update("UPDATE user SET #{option} + 1 WHERE ID = #{ID}")
+    void addlate(short id, String option);
 
     @Select("SELECT pass FROM user WHERE email = #{email} AND name = #{name}")
     String getpass(String email, String name);

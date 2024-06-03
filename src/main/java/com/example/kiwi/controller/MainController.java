@@ -4,6 +4,9 @@ import com.example.kiwi.domain.user.User;
 import com.example.kiwi.domain.user.UserDTO;
 import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.service.UserSer;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,10 +26,16 @@ public class MainController {
     private final JavaMailSenderImpl mailSender;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response, HttpSession session) {
         String username = userDTO.getUsername();
 
         if(userSer.login(username, userDTO.getPassword())) {
+            session.setAttribute("username", username);
+
+            Cookie cookie = new Cookie("username", username);
+            cookie.setPath("/");
+            cookie.setMaxAge(3600);
+            response.addCookie(cookie);
             return ResponseEntity.ok("Hello " + username);
         }
         else if (username == null || userRep.findByUsername(username) == null) {//이름이 그냥 null이거나 DB에 없으면 나오는 거
@@ -56,34 +65,40 @@ public class MainController {
         }
     }
 
-    @PostMapping("/addlate")
-    public void addlate(@RequestBody Short id){
-        userSer.addlate(id);
+    @PostMapping("/add{option}")
+    public void addoptionP(@RequestBody Short id,@RequestBody @PathVariable String option){
+        userSer.addlate(id,option);
     }
-    
-    @PostMapping("/PW-check")
-    public ResponseEntity<?> checkPassword(@RequestBody UserDTO userDTO) {
-        String username = userDTO.getUsername();
-        String e_mail = userDTO.getEmail();
-        String password = userSer.getpass(username,e_mail);
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("s23001@gsm.hs.kr");
-        message.setTo(e_mail);
-        message.setSubject("KIWI에서 비밀번호와 관련된 메일입니다.");
-        if (password == null)
-            message.setText("비밀번호가 없습니다. 문제가 생긴 가능성이 있으니 KIWI관련자에게 연락주세요.\n담당자:진건희");
-        else
-            message.setText("사용자님의 비밀번호는 '"+password+"' 입니다.\n잊어버리지 않게 조심해주세요.");
-
-        try {
-            mailSender.send(message);
-            return ResponseEntity.ok("good");
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("bad");
-        }
+    @GetMapping("/add{option}")
+    public void addoptionG(@RequestParam Short id,@RequestBody @PathVariable String option){
+        userSer.addlate(id,option);
     }
+
+
+//    @PostMapping("/PW-check")
+//    public ResponseEntity<?> checkPassword(@RequestBody UserDTO userDTO) {
+//        String username = userDTO.getUsername();
+//        String e_mail = userDTO.getEmail();
+//        String password = userSer.getpass(username,e_mail);
+//
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setFrom("s23001@gsm.hs.kr");
+//        message.setTo(e_mail);
+//        message.setSubject("KIWI에서 비밀번호와 관련된 메일입니다.");
+//        if (password == null)
+//            message.setText("비밀번호가 없습니다. 문제가 생긴 가능성이 있으니 KIWI관련자에게 연락주세요.\n담당자:진건희");
+//        else
+//            message.setText("사용자님의 비밀번호는 '"+password+"' 입니다.\n잊어버리지 않게 조심해주세요.");
+//
+//        try {
+//            mailSender.send(message);
+//            return ResponseEntity.ok("good");
+//        }
+//        catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("bad");
+//        }
+//    }
 
     @PostMapping("/PW-check/change")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password) {

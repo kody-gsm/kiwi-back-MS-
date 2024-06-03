@@ -23,7 +23,7 @@ public class UserSer {
         return pass.equals(password);
     }
 
-    public void addlate(short id){
-        userMapper.addlate(id);
+    public void addlate(short id,String option){
+        userMapper.addlate(id,option);
     }
 }

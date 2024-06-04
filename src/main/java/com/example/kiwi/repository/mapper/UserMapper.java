@@ -13,5 +13,5 @@ public interface UserMapper {
     void addlate(short id, String option);
 
     @Select("SELECT pass FROM user WHERE email = #{email} AND name = #{name}")
-    String getpass(String email, String name);
+    String getpass1(String email, String name);
 }

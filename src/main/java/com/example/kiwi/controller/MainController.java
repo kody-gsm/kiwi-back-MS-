@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -80,7 +81,7 @@ public class MainController {
 //    public ResponseEntity<?> checkPassword(@RequestBody UserDTO userDTO) {
 //        String username = userDTO.getUsername();
 //        String e_mail = userDTO.getEmail();
-//        String password = userSer.getpass(username,e_mail);
+//        String password = userSer.getpass1(username,e_mail);
 //
 //        SimpleMailMessage message = new SimpleMailMessage();
 //        message.setFrom("s23001@gsm.hs.kr");
@@ -105,7 +106,7 @@ public class MainController {
         String username = userDTO.getUsername();
         String e_mail = userDTO.getEmail();
         String password = userDTO.getPassword();
-        String old_password = userSer.getpass(username, e_mail);
+        String old_password = userSer.getpass1(username, e_mail);
 
         if(password.equals(old_password)) {
             User user = User.builder()

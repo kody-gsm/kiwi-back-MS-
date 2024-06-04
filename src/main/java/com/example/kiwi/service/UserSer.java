@@ -1,6 +1,5 @@
 package com.example.kiwi.service;
 
-import com.example.kiwi.domain.user.User;
 import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.repository.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,11 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class UserSer {
+
     private final UserRep userRep;
     private final UserMapper userMapper;
 
-    public String getpass(String name, String email){
-        return userMapper.getpass(name, email);
+    public String getpass1(String name, String email){
+        return userMapper.getpass1(name, email);
     }
 
     public boolean login(String name, String password) {

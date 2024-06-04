@@ -18,7 +18,16 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig{
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/*");
+        return (web) -> web.ignoring().requestMatchers("/*").and();
+    }
+
+    @Bean
+    public SecurityFilterChain springSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .formLogin(form -> form.loginPage("http://localhost:3000/").permitAll());
+        http
+                .logout(log -> log.logoutSuccessUrl("/"));
+        return http.build();
     }
 
     @Bean

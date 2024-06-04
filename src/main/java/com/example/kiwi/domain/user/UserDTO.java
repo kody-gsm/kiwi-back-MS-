@@ -2,7 +2,9 @@ package com.example.kiwi.domain.user;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class UserDTO {
     private String username;

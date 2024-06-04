@@ -18,8 +18,7 @@ public class User {
     @Column(nullable = false, length = 5)
     private String username;
 
-    @Column(nullable = false, length = 20)
-    @Size(min = 8, max = 20)
+    @Column(nullable = false, length = 60)
     private String password;
 
     @Column(nullable = false)

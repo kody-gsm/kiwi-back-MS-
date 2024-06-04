@@ -49,6 +49,7 @@ public class MainController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@RequestBody UserDTO userDTO) {
+
         if(userDTO != null) {
             User user = User.builder()
                     .username(userDTO.getUsername())
@@ -62,7 +63,7 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("값이 없는게 있습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("값이 없습니다.");
         }
     }
 
@@ -75,31 +76,6 @@ public class MainController {
     public void addoptionG(@RequestParam Short id,@RequestBody @PathVariable String option){
         userSer.addlate(id,option);
     }
-
-
-//    @PostMapping("/PW-check")
-//    public ResponseEntity<?> checkPassword(@RequestBody UserDTO userDTO) {
-//        String username = userDTO.getUsername();
-//        String e_mail = userDTO.getEmail();
-//        String password = userSer.getpass1(username,e_mail);
-//
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setFrom("s23001@gsm.hs.kr");
-//        message.setTo(e_mail);
-//        message.setSubject("KIWI에서 비밀번호와 관련된 메일입니다.");
-//        if (password == null)
-//            message.setText("비밀번호가 없습니다. 문제가 생긴 가능성이 있으니 KIWI관련자에게 연락주세요.\n담당자:진건희");
-//        else
-//            message.setText("사용자님의 비밀번호는 '"+password+"' 입니다.\n잊어버리지 않게 조심해주세요.");
-//
-//        try {
-//            mailSender.send(message);
-//            return ResponseEntity.ok("good");
-//        }
-//        catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("bad");
-//        }
-//    }
 
     @PostMapping("/PW-check/change")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password) {
@@ -118,5 +94,10 @@ public class MainController {
         else {
             return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Not equals password");
         }
+    }
+
+    @GetMapping("/asdf")
+    public ResponseEntity<?> test(){
+        return ResponseEntity.ok("Asdf");
     }
 }

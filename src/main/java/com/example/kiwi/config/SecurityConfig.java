@@ -23,6 +23,13 @@ public class SecurityConfig {
                 .formLogin((formlogin) -> {
 //                    formlogin.loginPage("http://localhost:3000/login");
                 })
+                .logout((logout) ->{
+                    logout.logoutSuccessUrl("/");
+                })
+                .rememberMe((remember) -> {
+                    remember.rememberMeParameter("remember")
+                            .alwaysRemember(true);
+                })
                 .build();
     }
 

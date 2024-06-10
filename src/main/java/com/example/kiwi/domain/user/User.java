@@ -1,7 +1,6 @@
 package com.example.kiwi.domain.user;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

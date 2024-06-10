@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -25,12 +26,15 @@ public class MainController {
     private final UserSer userSer;
     private final UserRep userRep;
     private final JavaMailSenderImpl mailSender;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response, HttpSession session) {
         String username = userDTO.getUsername();
+        String email = userDTO.getEmail();
+        UserDTO user = userSer.getDto(username,email);
 
-        if(userSer.login(username, userDTO.getPassword())) {
+        if(passwordEncoder.matches(userDTO.getPassword(),user.getPassword())) {
             session.setAttribute("username", username);
 
             Cookie cookie = new Cookie("username", username);
@@ -39,11 +43,11 @@ public class MainController {
             response.addCookie(cookie);
             return ResponseEntity.ok("Hello " + username);
         }
-        else if (username == null || userRep.findByUsername(username) == null) {//이름이 그냥 null이거나 DB에 없으면 나오는 거
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("이름이 없습니다.");
+        else if (username == null || userRep.findByUsername(username) == null) {
+            return ResponseEntity.badRequest().body("이름이 없습니다.");
         }
         else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("비밀번호가 다릅니다.");
+            return ResponseEntity.badRequest().body("비밀번호가 다릅니다.");
         }
     }
 
@@ -53,17 +57,17 @@ public class MainController {
         if(userDTO != null) {
             User user = User.builder()
                     .username(userDTO.getUsername())
-                    .password(userDTO.getPassword())
+                    .password(userSer.encodePW(userDTO.getPassword()))
                     .ID(userDTO.getUser_id())
                     .email(userDTO.getEmail())
                     .gender(userDTO.getGender())
                     .build();
             userRep.save(user);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Successful Create" + user.getUsername());
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("값이 없습니다.");
+            return ResponseEntity.badRequest().body("값이 없습니다.");
         }
     }
 
@@ -92,7 +96,7 @@ public class MainController {
             return ResponseEntity.ok("change password");
         }
         else {
-            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body("Not equals password");
+            return ResponseEntity.badRequest().body("Not equals password");
         }
     }
 

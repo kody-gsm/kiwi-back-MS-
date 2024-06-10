@@ -13,14 +13,6 @@ public class UserDTO {
     private Boolean gender;
     private String email;
 
-    public UserDTO(User user){
-        this.username = user.getUsername();
-        this.password = user.getPassword();
-        this.user_id = user.getUser_id();
-        this.gender = user.getGender();
-        this.email = user.getEmail();
-    }
-
     @Builder
     public UserDTO(String username, String password, Short ID, Boolean gender,String email) {
         this.username = username;

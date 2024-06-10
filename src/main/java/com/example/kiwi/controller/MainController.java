@@ -100,8 +100,9 @@ public class MainController {
         }
     }
 
-    @GetMapping("/asdf")
-    public ResponseEntity<?> test(){
-        return ResponseEntity.ok("Asdf");
+    @GetMapping("/{asdf}")
+    public ResponseEntity<?> test(@PathVariable String asdf){
+        System.out.println(asdf);
+        return ResponseEntity.ok(asdf);
     }
 }

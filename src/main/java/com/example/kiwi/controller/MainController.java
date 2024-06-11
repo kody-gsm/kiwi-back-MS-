@@ -10,12 +10,14 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.apache.ibatis.javassist.Loader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true", methods = {RequestMethod.GET, RequestMethod.POST})
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Transactional
 @RequiredArgsConstructor
 public class MainController {
+
     private final UserSer userSer;
     private final UserRep userRep;
     private final JavaMailSenderImpl mailSender;
@@ -71,38 +74,67 @@ public class MainController {
         }
     }
 
-    @PostMapping("/add{option}")
-    public void addoptionP(@RequestBody Short id,@RequestBody @PathVariable String option){
-        userSer.addlate(id,option);
+//    @PostMapping("/add{option}")
+//    public void addoptionP(@RequestBody Short id,@RequestBody @PathVariable String option){
+//        userSer.addlate(id,option);
+//    }
+//
+//    @GetMapping("/add{option}")
+//    public void addoptionG(@RequestParam Short id,@RequestBody @PathVariable String option){
+//        userSer.addlate(id,option);
+//    }
+
+    @PostMapping("/PW-check")
+    public ResponseEntity<?> checkPW(@RequestBody UserDTO userDTO){
+        String username = userDTO.getUsername();
+        String email = userDTO.getEmail();
+
+        try {
+            UserDTO information = userSer.getDto(username, email);
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(information.getEmail());
+            message.setSubject("비밀번호와 관련하여");
+            message.setText("asdf");
+            mailSender.send(message);
+            return ResponseEntity.ok("성공적으로 보냈습니다.");
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @GetMapping("/add{option}")
-    public void addoptionG(@RequestParam Short id,@RequestBody @PathVariable String option){
-        userSer.addlate(id,option);
-    }
+//    @GetMapping("/mail")
+//    public ResponseEntity<?> mailTest(@RequestParam String index){
+//        SimpleMailMessage message = new SimpleMailMessage();
+//        message.setTo("kminsung0728@gmail.com");
+//        message.setSubject("Test");
+//        message.setText(index);
+//        mailSender.send(message);
+//        return ResponseEntity.ok(index);
+//    }
 
     @PostMapping("/PW-check/change")
-    public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password) {
-        String username = userDTO.getUsername();
-        String e_mail = userDTO.getEmail();
+    public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password, @RequestBody String code) {
         String password = userDTO.getPassword();
-        String old_password = userSer.getpass1(username, e_mail);
+        String email = userDTO.getEmail();
+        String name = userDTO.getUsername();
 
-        if(password.equals(old_password)) {
-            User user = User.builder()
-                    .password(new_password)
-                    .build();
-            userRep.save(user);
-            return ResponseEntity.ok("change password");
+
+
+        UserDTO information = userSer.getDto(name,email);
+        if (passwordEncoder.matches(password,information.getPassword())) {
+            if (!new_password.equals(password)) {
+                User user = User.builder()
+                        .password(userSer.encodePW(new_password))
+                        .build();
+                userRep.save(user);
+                return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+            } else {
+                return ResponseEntity.badRequest().body("예전 비밀번호랑 같습니다.");
+            }
         }
         else {
-            return ResponseEntity.badRequest().body("Not equals password");
+            return ResponseEntity.badRequest().body("유저의 정보가 다릅니다.");
         }
-    }
-
-    @GetMapping("/{asdf}")
-    public ResponseEntity<?> test(@PathVariable String asdf){
-        System.out.println(asdf);
-        return ResponseEntity.ok(asdf);
     }
 }

@@ -21,15 +21,14 @@ public class UserSer {
     private final PasswordEncoder passwordEncoder;
     private User user;
 
-    public UserDTO getDto(String name, String Email){
-        User users = userRep.findByUsernameAndEmail(name,Email);
+    public UserDTO getDto(String Email){
+        User users = userRep.findByEmail(Email);
         if(user != null) {
             return UserDTO.builder()
-                    .ID(users.getUser_id())
-                    .username(name)
+                    .ID(users.getId())
+                    .username(users.getUsername())
                     .password(users.getPassword())
                     .email(users.getEmail())
-                    .gender(users.getGender())
                     .build();
         }
         else

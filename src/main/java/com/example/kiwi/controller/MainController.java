@@ -33,9 +33,9 @@ public class MainController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response, HttpSession session) {
-        String username = userDTO.getUsername();
         String email = userDTO.getEmail();
-        UserDTO user = userSer.getDto(username,email);
+        UserDTO user = userSer.getDto(email);
+        String username = user.getUsername();
 
         if(passwordEncoder.matches(userDTO.getPassword(),user.getPassword())) {
             session.setAttribute("username", username);
@@ -61,9 +61,8 @@ public class MainController {
             User user = User.builder()
                     .username(userDTO.getUsername())
                     .password(userSer.encodePW(userDTO.getPassword()))
-                    .ID(userDTO.getUser_id())
+                    .ID(userDTO.getId())
                     .email(userDTO.getEmail())
-                    .gender(userDTO.getGender())
                     .build();
             userRep.save(user);
 
@@ -86,11 +85,10 @@ public class MainController {
 
     @PostMapping("/PW-check")
     public ResponseEntity<?> checkPW(@RequestBody UserDTO userDTO){
-        String username = userDTO.getUsername();
         String email = userDTO.getEmail();
 
         try {
-            UserDTO information = userSer.getDto(username, email);
+            UserDTO information = userSer.getDto(email);
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(information.getEmail());
             message.setSubject("비밀번호와 관련하여");
@@ -117,11 +115,8 @@ public class MainController {
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password, @RequestBody String code) {
         String password = userDTO.getPassword();
         String email = userDTO.getEmail();
-        String name = userDTO.getUsername();
 
-
-
-        UserDTO information = userSer.getDto(name,email);
+        UserDTO information = userSer.getDto(email);
         if (passwordEncoder.matches(password,information.getPassword())) {
             if (!new_password.equals(password)) {
                 User user = User.builder()

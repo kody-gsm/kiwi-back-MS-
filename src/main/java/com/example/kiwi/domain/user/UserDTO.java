@@ -9,16 +9,14 @@ import lombok.NoArgsConstructor;
 public class UserDTO {
     private String username;
     private String password;
-    private Short user_id;
-    private Boolean gender;
+    private Short id;
     private String email;
 
     @Builder
     public UserDTO(String username, String password, Short ID, Boolean gender,String email) {
         this.username = username;
         this.password = password;
-        this.user_id = ID;
-        this.gender = gender;
+        this.id = ID;
         this.email = email;
     }
 }

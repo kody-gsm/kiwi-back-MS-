@@ -23,7 +23,7 @@ public class UserSer {
 
     public UserDTO getDto(String Email){
         User users = userRep.findByEmail(Email);
-        if(user != null) {
+        if(users != null) {
             return UserDTO.builder()
                     .ID(users.getId())
                     .username(users.getUsername())

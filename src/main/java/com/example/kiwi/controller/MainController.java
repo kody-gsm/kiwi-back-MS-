@@ -55,8 +55,13 @@ public class MainController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@RequestBody UserDTO userDTO) {
+        UserDTO DB = userSer.getDto(userDTO.getEmail());
 
-        if(userDTO != null && userDTO.getEmail() != null && userDTO.getPassword() != null && userDTO.getUsername() != null && userDTO.getId() != null) {
+        if(DB != null) {
+            return ResponseEntity.badRequest().body(DB.getUsername()+"님의 정보가 이미 있습니다.");
+        }
+
+        if (userDTO.getEmail() != null && userDTO.getPassword() != null && userDTO.getUsername() != null) {
             User user = User.builder()
                     .username(userDTO.getUsername())
                     .password(userSer.encodePW(userDTO.getPassword()))
@@ -65,11 +70,11 @@ public class MainController {
                     .build();
             userRep.save(user);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(user.getUsername()+"님의 정보를 성공적으로 생성했습니다.");
-        }
-        else {
+            return ResponseEntity.status(HttpStatus.CREATED).body(user.getUsername() + "님의 정보를 성공적으로 생성했습니다.");
+        } else {
             return ResponseEntity.badRequest().body("값이 없습니다.");
         }
+
     }
 
     @PostMapping("/PW-check")

@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Getter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Short id;
 
     @Column(length = 5)

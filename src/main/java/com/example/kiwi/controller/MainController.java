@@ -9,15 +9,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
-import org.apache.ibatis.javassist.Loader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 
 @CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true", methods = {RequestMethod.GET, RequestMethod.POST})
@@ -36,16 +33,18 @@ public class MainController {
         String email = userDTO.getEmail();
         UserDTO user = userSer.getDto(email);
         String username = user.getUsername();
+        String password = user.getPassword();
 
-        if(passwordEncoder.matches(userDTO.getPassword(),user.getPassword())) {
-            session.setAttribute("username", username);
+        if(passwordEncoder.matches(userDTO.getPassword(),password)) {
+            session.setAttribute("user",password);
 
-            Cookie cookie = new Cookie("username", username);
+            Cookie cookie = new Cookie("user",password);
             cookie.setPath("/");
             cookie.setMaxAge(3600);
             response.addCookie(cookie);
             return ResponseEntity.ok("Hello " + username);
         }
+
         else if (username == null || userRep.findByUsername(username) == null) {
             return ResponseEntity.badRequest().body("이름이 없습니다.");
         }
@@ -57,7 +56,7 @@ public class MainController {
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@RequestBody UserDTO userDTO) {
 
-        if(userDTO != null) {
+        if(userDTO != null && userDTO.getEmail() != null && userDTO.getPassword() != null && userDTO.getUsername() != null && userDTO.getId() != null) {
             User user = User.builder()
                     .username(userDTO.getUsername())
                     .password(userSer.encodePW(userDTO.getPassword()))
@@ -66,22 +65,12 @@ public class MainController {
                     .build();
             userRep.save(user);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("Successful Create" + user.getUsername());
+            return ResponseEntity.status(HttpStatus.CREATED).body(user.getUsername()+"님의 정보를 성공적으로 생성했습니다.");
         }
         else {
             return ResponseEntity.badRequest().body("값이 없습니다.");
         }
     }
-
-//    @PostMapping("/add{option}")
-//    public void addoptionP(@RequestBody Short id,@RequestBody @PathVariable String option){
-//        userSer.addlate(id,option);
-//    }
-//
-//    @GetMapping("/add{option}")
-//    public void addoptionG(@RequestParam Short id,@RequestBody @PathVariable String option){
-//        userSer.addlate(id,option);
-//    }
 
     @PostMapping("/PW-check")
     public ResponseEntity<?> checkPW(@RequestBody UserDTO userDTO){
@@ -92,7 +81,7 @@ public class MainController {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(information.getEmail());
             message.setSubject("비밀번호와 관련하여");
-            message.setText("asdf");
+            message.setText("비밀번호를 바꾸시려면 이 코드를 작성하십시요.");
             mailSender.send(message);
             return ResponseEntity.ok("성공적으로 보냈습니다.");
         }
@@ -101,35 +90,33 @@ public class MainController {
         }
     }
 
-//    @GetMapping("/mail")
-//    public ResponseEntity<?> mailTest(@RequestParam String index){
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo("kminsung0728@gmail.com");
-//        message.setSubject("Test");
-//        message.setText(index);
-//        mailSender.send(message);
-//        return ResponseEntity.ok(index);
-//    }
 
     @PostMapping("/PW-check/change")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password, @RequestBody String code) {
         String password = userDTO.getPassword();
         String email = userDTO.getEmail();
+        String check = "";
+
 
         UserDTO information = userSer.getDto(email);
-        if (passwordEncoder.matches(password,information.getPassword())) {
-            if (!new_password.equals(password)) {
-                User user = User.builder()
-                        .password(userSer.encodePW(new_password))
-                        .build();
-                userRep.save(user);
-                return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+        if(code.equals(check)) {
+            if (passwordEncoder.matches(password, information.getPassword())) {
+                if (!new_password.equals(password)) {
+                    User user = User.builder()
+                            .ID(information.getId())
+                            .password(userSer.encodePW(new_password))
+                            .build();
+                    userRep.save(user);
+                    return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
+                } else {
+                    return ResponseEntity.badRequest().body("예전 비밀번호랑 같습니다.");
+                }
             } else {
-                return ResponseEntity.badRequest().body("예전 비밀번호랑 같습니다.");
+                return ResponseEntity.badRequest().body("사용자의 정보가 다릅니다.");
             }
         }
         else {
-            return ResponseEntity.badRequest().body("유저의 정보가 다릅니다.");
+            return ResponseEntity.badRequest().body("입력하신 코드가 알맞지 않습니다.");
         }
     }
 }

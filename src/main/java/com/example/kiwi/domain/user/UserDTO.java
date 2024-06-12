@@ -13,7 +13,7 @@ public class UserDTO {
     private String email;
 
     @Builder
-    public UserDTO(String username, String password, Short ID, Boolean gender,String email) {
+    public UserDTO(String username, String password, Short ID,String email) {
         this.username = username;
         this.password = password;
         this.id = ID;

@@ -17,7 +17,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers("/login").authenticated();
+//                    authorize.requestMatchers("/login").authenticated();
                     authorize.anyRequest().permitAll();
                 })
                 .formLogin((formlogin) -> {

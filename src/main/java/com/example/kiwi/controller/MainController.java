@@ -44,7 +44,6 @@ public class MainController {
             response.addCookie(cookie);
             return ResponseEntity.ok("Hello " + username);
         }
-
         else if (username == null || userRep.findByUsername(username) == null) {
             return ResponseEntity.badRequest().body("이름이 없습니다.");
         }
@@ -55,8 +54,16 @@ public class MainController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@RequestBody UserDTO userDTO) {
-        UserDTO DB = userSer.getDto(userDTO.getEmail());
 
+        if (userRep.findByEmail(userDTO.getEmail()) != null) {
+            return ResponseEntity.badRequest().body(userDTO.getEmail()+"은 이미 사용중인 이메일입니다.");
+        }
+
+        if (userRep.findById(userDTO.getId()) != null) {
+            return ResponseEntity.badRequest().body(userDTO.getId()+"은 이미 사용중인 학번입니다.");
+        }
+
+        UserDTO DB = userSer.getDto(userDTO.getEmail());
         if(DB != null) {
             return ResponseEntity.badRequest().body(DB.getUsername()+"님의 정보가 이미 있습니다.");
         }
@@ -74,7 +81,6 @@ public class MainController {
         } else {
             return ResponseEntity.badRequest().body("값이 없습니다.");
         }
-
     }
 
     @PostMapping("/PW-check")

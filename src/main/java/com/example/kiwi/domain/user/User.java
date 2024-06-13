@@ -1,7 +1,6 @@
 package com.example.kiwi.domain.user;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,27 +11,22 @@ import lombok.NoArgsConstructor;
 @Getter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Short user_id;
+    private Short id;
 
-    @Column(nullable = false, length = 5)
+    @Column(length = 5)
     private String username;
 
-    @Column(nullable = false, length = 60)
+    @Column(length = 60)
     private String password;
 
-    @Column(nullable = false)
-    private Boolean gender;
-
-    @Column(nullable = false, length = 7)
+    @Column(length = 7)
     private String email;
 
     @Builder
-    public User(Short ID,String username, String password, Boolean gender, String email) {
-        this.user_id = ID;
+    public User(Short ID,String username, String password, String email) {
+        this.id = ID;
         this.username = username;
         this.password = password;
-        this.gender = gender;
         this.email = email;
     }
 }

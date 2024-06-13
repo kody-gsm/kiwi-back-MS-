@@ -6,7 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class AttendDTO {
-    private User attendId;
 
     private Short etc_absent;
     private Short absent;
@@ -24,8 +23,7 @@ public class AttendDTO {
     private Short dise_leave;
 
     @Builder
-    public AttendDTO(User attendId, Short etc_late, Short etc_leave, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short late, Short reco_late, Short dise_late, Short early_leave, Short reco_leave, Short dise_leave) {
-        this.attendId = attendId;
+    public AttendDTO(Short etc_late, Short etc_leave, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short late, Short reco_late, Short dise_late, Short early_leave, Short reco_leave, Short dise_leave) {
         this.etc_late = etc_late;
         this.etc_absent = etc_absent;
         this.absent = absent;

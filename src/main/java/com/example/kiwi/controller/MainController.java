@@ -42,6 +42,7 @@ public class MainController {
             cookie.setPath("/");
             cookie.setMaxAge(3600);
             response.addCookie(cookie);
+
             return ResponseEntity.ok("Hello " + username);
         }
         else if (username == null || userRep.findByUsername(username) == null) {
@@ -64,6 +65,7 @@ public class MainController {
         }
 
         UserDTO DB = userSer.getDto(userDTO.getEmail());
+
         if(DB != null) {
             return ResponseEntity.badRequest().body(DB.getUsername()+"님의 정보가 이미 있습니다.");
         }
@@ -86,6 +88,13 @@ public class MainController {
     @PostMapping("/PW-check")
     public ResponseEntity<?> checkPW(@RequestBody UserDTO userDTO){
         String email = userDTO.getEmail();
+        StringBuffer strPwd = new StringBuffer();
+        char[] str = new char[1];
+
+        for (int i=0;i<10;i++){
+            str[0] =  (char) ((Math.random() * 94)+33);
+            strPwd.append(str[0]);
+        }
 
         try {
             UserDTO information = userSer.getDto(email);
@@ -100,7 +109,6 @@ public class MainController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
     @PostMapping("/PW-check/change")
     public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password, @RequestBody String code) {

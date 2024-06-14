@@ -11,12 +11,14 @@ public class UserDTO {
     private String password;
     private Short id;
     private String email;
+    private Boolean enable;
 
     @Builder
-    public UserDTO(String username, String password, Short ID,String email) {
+    public UserDTO(String username, String password, Short ID,String email, Boolean enable) {
         this.username = username;
         this.password = password;
         this.id = ID;
         this.email = email;
+        this.enable = enable;
     }
 }

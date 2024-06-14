@@ -1,6 +1,7 @@
 package com.example.kiwi.domain.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,11 +23,15 @@ public class User {
     @Column(length = 7)
     private String email;
 
+    @Column(nullable = false)
+    private Boolean enable = true;
+
     @Builder
-    public User(Short ID,String username, String password, String email) {
+    public User(Short ID,String username, String password, String email, boolean enable) {
         this.id = ID;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.enable = enable;
     }
 }

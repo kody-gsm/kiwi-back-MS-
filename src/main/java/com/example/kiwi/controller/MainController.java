@@ -86,6 +86,7 @@ public class MainController {
                     .ID(userDTO.getId())
                     .email(userDTO.getEmail())
                     .enable(true)
+                    .authority("ROLE_USER")
                     .build();
             userRep.save(user);
 
@@ -102,9 +103,11 @@ public class MainController {
         char[] str = new char[1];
 
         for (int i=0;i<10;i++){
-            str[0] =  (char) ((Math.random() * 94)+33);
+            str[0] =  (char) ((Math.random() * 26)+65);
             strPwd.append(str[0]);
         }
+
+//        System.out.println(strPwd);
 
         try {
             UserDTO information = userSer.getDto(email);
@@ -140,6 +143,23 @@ public class MainController {
             }
         } else {
             return ResponseEntity.badRequest().body("사용자의 정보가 다릅니다.");
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestBody UserDTO userDTO) {
+        short userId = userDTO.getId();
+        boolean enable = userDTO.getEnable();
+        if(enable){
+            User user = User.builder()
+                    .ID(userId)
+                    .enable(false)
+                    .build();
+            userRep.save(user);
+            return ResponseEntity.ok("로그아웃 되었습니다.");
+        }
+        else {
+            return ResponseEntity.badRequest().body("실패하였습니다.");
         }
     }
 }

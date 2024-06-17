@@ -27,8 +27,8 @@ public class SecurityConfig {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .usersByUsernameQuery("select username,password,enable from user where username=?")
-                .authoritiesByUsernameQuery("select username,enable from user where ID <= 4000 and username = ?");
-//                .passwordEncoder(passwordEncoder);
+                .authoritiesByUsernameQuery("select username,authority from user where username=?")
+                .passwordEncoder(passwordEncoder);
     }
 
     @Bean
@@ -36,14 +36,16 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
-//                    authorize.requestMatchers("/login").authenticated();
+//                    authorize.requestMatchers("/login","sign-up").permitALL();
+//                    authorize.anyRequest().authenticated()
+                    authorize.requestMatchers("/admin/**").hasRole("ADMIN");
                     authorize.anyRequest().permitAll();
                 })
                 .formLogin((formalin) -> {
                     formalin.loginPage("http://localhost:3000/login");
                 })
                 .logout((logout) -> {
-                    logout.logoutSuccessUrl("/");
+                    logout.logoutSuccessUrl("/logout");
                 })
                 .rememberMe((remember) -> {
                     remember.rememberMeParameter("remember")

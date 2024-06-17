@@ -12,15 +12,15 @@ public class UserDTO {
     private Short id;
     private String email;
     private Boolean enable;
-    private String authority;
+    private UserRole role;
 
     @Builder
-    public UserDTO(String username, String password, Short ID,String email, Boolean enable, String authority) {
+    public UserDTO(String username, String password, Short ID,String email, Boolean enable, UserRole role) {
         this.username = username;
         this.password = password;
         this.id = ID;
         this.email = email;
         this.enable = enable;
-        this.authority = authority;
+        this.role = role;
     }
 }

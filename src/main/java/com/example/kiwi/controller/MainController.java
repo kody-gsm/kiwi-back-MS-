@@ -1,12 +1,11 @@
 package com.example.kiwi.controller;
 
+import com.example.kiwi.domain.user.SignUpRequest;
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.domain.user.UserDTO;
+import com.example.kiwi.domain.user.UserRole;
 import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.service.UserSer;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,75 +23,19 @@ import org.springframework.web.bind.annotation.*;
 public class MainController {
 
     private final UserSer userSer;
-    private final UserRep userRep;
     private final JavaMailSenderImpl mailSender;
-    private final PasswordEncoder passwordEncoder;
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDTO userDTO, HttpServletResponse response, HttpSession session) {
-        String email = userDTO.getEmail();
-        UserDTO information = userSer.getDto(email);
-
-        if(information == null) {
-            return ResponseEntity.badRequest().body("유저가 없습니다.");
-        }
-
-        UserDTO user = userSer.getDto(email);
-        String password = user.getPassword();
-
-        if(!email.equals(information.getEmail())){
-            return ResponseEntity.badRequest().body("email이 다릅니다.");
-        }
-
-        if(passwordEncoder.matches(userDTO.getPassword(),password)) {
-            session.setAttribute("user",password);
-
-            Cookie cookie = new Cookie("user",password);
-            cookie.setPath("/");
-            cookie.setMaxAge(3600);
-            response.addCookie(cookie);
-
-            return ResponseEntity.ok("환영합니다. " + user.getUsername());
-        }
-        else if (user.getUsername() == null || userRep.findByUsername(user.getUsername()) == null) {
-            return ResponseEntity.badRequest().body("이름이 없습니다.");
-        }
-        else {
-            return ResponseEntity.badRequest().body("비밀번호가 다릅니다.");
-        }
-    }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUP(@RequestBody UserDTO userDTO) {
-
-        if (userRep.findById(userDTO.getId()) != null) {
-            return ResponseEntity.badRequest().body(userDTO.getId()+"은 이미 사용중인 학번입니다.");
+    public ResponseEntity<?> signUP(@RequestBody SignUpRequest request) {
+        if(userSer.checkLoginID(request.getId())){
+            return ResponseEntity.badRequest().body("이미 그 학번은 사용중입니다.");
         }
-
-        if (userRep.findByEmail(userDTO.getEmail()) != null) {
-            return ResponseEntity.badRequest().body(userDTO.getEmail()+"은 이미 사용중인 이메일입니다.");
+        else if(userSer.checkEmail(request.getEmail())){
+            return ResponseEntity.badRequest().body("이미 그 email은 사용입니다.");
         }
-
-        UserDTO DB = userSer.getDto(userDTO.getEmail());
-
-        if(DB != null) {
-            return ResponseEntity.badRequest().body(DB.getUsername()+"님의 정보가 이미 있습니다.");
-        }
-
-        if (userDTO.getEmail() != null && userDTO.getPassword() != null && userDTO.getUsername() != null) {
-            User user = User.builder()
-                    .username(userDTO.getUsername())
-                    .password(userSer.encodePW(userDTO.getPassword()))
-                    .ID(userDTO.getId())
-                    .email(userDTO.getEmail())
-                    .enable(true)
-                    .authority("ROLE_USER")
-                    .build();
-            userRep.save(user);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(user.getUsername() + "님의 정보를 성공적으로 생성했습니다.");
-        } else {
-            return ResponseEntity.badRequest().body("값이 없습니다.");
+        else{
+            userSer.signUp(request);
+            return ResponseEntity.ok("asdf");
         }
     }
 
@@ -107,12 +50,10 @@ public class MainController {
             strPwd.append(str[0]);
         }
 
-//        System.out.println(strPwd);
+        System.out.println(strPwd);
 
         try {
-            UserDTO information = userSer.getDto(email);
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(information.getEmail());
             message.setSubject("비밀번호와 관련하여");
             message.setText("비밀번호를 바꾸시려면 이 코드"+strPwd+"를 작성하십시요.");
             mailSender.send(message);
@@ -123,43 +64,7 @@ public class MainController {
         }
     }
 
-    @PostMapping("/PW-check/change")
-    public ResponseEntity<?> changePassword(@RequestBody UserDTO userDTO, @RequestBody String new_password) {
-        String password = userDTO.getPassword();
-        String email = userDTO.getEmail();
-
-        UserDTO information = userSer.getDto(email);
-
-        if (passwordEncoder.matches(password, information.getPassword())) {
-            if (!new_password.equals(password)) {
-                User user = User.builder()
-                        .ID(information.getId())
-                        .password(userSer.encodePW(new_password))
-                        .build();
-                userRep.save(user);
-                return ResponseEntity.ok("비밀번호가 성공적으로 변경되었습니다.");
-            } else {
-                return ResponseEntity.badRequest().body("예전 비밀번호랑 같습니다.");
-            }
-        } else {
-            return ResponseEntity.badRequest().body("사용자의 정보가 다릅니다.");
-        }
-    }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody UserDTO userDTO) {
-        short userId = userDTO.getId();
-        boolean enable = userDTO.getEnable();
-        if(enable){
-            User user = User.builder()
-                    .ID(userId)
-                    .enable(false)
-                    .build();
-            userRep.save(user);
-            return ResponseEntity.ok("로그아웃 되었습니다.");
-        }
-        else {
-            return ResponseEntity.badRequest().body("실패하였습니다.");
-        }
-    }
+//    @PostMapping("/logout")
+//    public ResponseEntity<?> logout(@RequestBody UserDTO userDTO) {
+//    }
 }

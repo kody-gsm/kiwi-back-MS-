@@ -25,16 +25,16 @@ public class User {
     @Column(nullable = false)
     private Boolean enable/* = true*/;
 
-    @Column(nullable = false)
-    private String authority/*= "ROLE_USER"*/;
+    private UserRole role;
 
     @Builder
-    public User(Short ID,String username, String password, String email, Boolean enable, String authority) {
+    public User(Short ID,String username, String password, String email, Boolean enable, UserRole role) {
         this.id = ID;
         this.username = username;
         this.password = password;
         this.email = email;
         this.enable = enable;
-        this.authority = authority;
+        this.role = role;
     }
 }
+

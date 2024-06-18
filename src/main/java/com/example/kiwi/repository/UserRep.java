@@ -6,11 +6,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
 public interface UserRep extends JpaRepository<User, Long> {
-    List<User> findByUsername(String username);
-    User findByEmail(String email);
-    User findById(Short id);
+    boolean existsById(Short id);
+    boolean existsByEmail(String email);
+    boolean existsByEmailAndPassword(String email, String password);
+    Optional<User> findByEmail(String email);
 }

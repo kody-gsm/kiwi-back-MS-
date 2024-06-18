@@ -1,7 +1,8 @@
 package com.example.kiwi.service;
 
+import com.example.kiwi.domain.user.LoginRequest;
+import com.example.kiwi.domain.user.SignUpRequest;
 import com.example.kiwi.domain.user.User;
-import com.example.kiwi.domain.user.UserDTO;
 import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.repository.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,34 +22,44 @@ public class UserSer {
     private final PasswordEncoder passwordEncoder;
     private User user;
 
-    public UserDTO getDto(String Email){
-        User users = userRep.findByEmail(Email);
-        if(users != null) {
-            return UserDTO.builder()
-                    .ID(users.getId())
-                    .username(users.getUsername())
-                    .password(users.getPassword())
-                    .email(users.getEmail())
-                    .build();
-        }
-        else
-            return null;
-    }
-
     public String encodePW(String password) {
         return passwordEncoder.encode(password);
     }
 
-    public String getpass1(String name, String email){
-        return userMapper.getpass1(name, email);
+    public boolean checkLoginID(Short id){
+        return userRep.existsById(id);
     }
 
-    public boolean login(String name, String password) {
-        String pass = userMapper.getpass(name);
-        return pass.equals(password);
+    public boolean checkEmail(String email){
+        return userRep.existsByEmail(email);
     }
 
-    public void addlate(short id,String option){
-        userMapper.addlate(id,option);
+    public void signUp(SignUpRequest req){
+        userRep.save(req.toEntity(encodePW(req.getPassword())));
+    }
+
+    public User login(LoginRequest req){
+        Optional<User> optionalUser = userRep.findByEmail(req.getEmail());
+
+        if(optionalUser.isEmpty()){
+            return null;
+        }
+
+        user = optionalUser.get();
+
+        if(!user.getPassword().equals(req.getPassword())){
+            return null;
+        }
+
+        return user;
+    }
+
+    public User getLoginUserByEmail(String email){
+        if(email == null){
+            return null;
+        }
+
+        Optional<User> optionalUser = userRep.findByEmail(email);
+        return optionalUser.orElse(null);
     }
 }

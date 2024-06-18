@@ -33,7 +33,7 @@ public class MainController {
         if (userSer.checkLoginID(request.getId())){
             bindingResult.addError(new FieldError("SignUpRequest","id","학번이 중복됩니다."));
         }
-        
+
         if (request.getEmail() == null){
             bindingResult.addError(new FieldError("SignUpRequest","email","이메일이 비어있습니다."));
         }
@@ -81,5 +81,9 @@ public class MainController {
         }
     }
 
+    @GetMapping("/asdf")
+    public String asdf(){
+        return "asdf";
+    }
 
 }

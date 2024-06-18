@@ -25,6 +25,7 @@ public class User {
     @Column(nullable = false)
     private Boolean enable/* = true*/;
 
+    @Enumerated(EnumType.STRING)
     private UserRole role;
 
     @Builder

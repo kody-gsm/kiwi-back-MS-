@@ -1,6 +1,7 @@
 package com.example.kiwi.domain.user;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class SignUpRequest {
 
-    @NotBlank(message = "학번이 비어있습니다.")
+    @NotNull(message = "학번이 비어있습니다.")
     private Short id;
 
     @NotBlank

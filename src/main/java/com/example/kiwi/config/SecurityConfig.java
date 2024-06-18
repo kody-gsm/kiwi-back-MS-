@@ -19,21 +19,6 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private DataSource dataSource;
-
-    @Autowired
-    public PasswordEncoder passwordEncoder;
-
-    @Autowired
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication()
-                .dataSource(dataSource)
-                .usersByUsernameQuery("select username,password,enable from user where username=?")
-                .authoritiesByUsernameQuery("select username,authority from user where username=?")
-                .passwordEncoder(passwordEncoder);
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
@@ -42,16 +27,15 @@ public class SecurityConfig {
                     authorize.requestMatchers("/login","sign-up").permitAll();
                     authorize.requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name());
                     authorize.anyRequest().authenticated();
-//                    authorize.anyRequest().permitAll();
                 })
                 .formLogin((formalin) -> {
                     formalin.usernameParameter("email");
                     formalin.passwordParameter("password");
-                    formalin.loginPage("http://localhost:3000/login");
-                    formalin.defaultSuccessUrl("https://localhost:3000/");
+//                    formalin.loginPage("/login");
+//                    formalin.defaultSuccessUrl("/asdf");
                 })
                 .logout((logout) -> {
-                    logout.logoutSuccessUrl("http://localhost:3000/");
+                    logout.logoutSuccessUrl("/");
                     logout.deleteCookies("JSESSIONID");
                     logout.invalidateHttpSession(true);
                     logout.logoutUrl("/logout");

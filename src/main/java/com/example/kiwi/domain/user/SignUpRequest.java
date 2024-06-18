@@ -29,7 +29,7 @@ public class SignUpRequest {
                 .password(password)
                 .username(this.username)
                 .email(this.email)
-                .role(UserRole.ROLE_USER)
+                .role(UserRole.USER)
                 .enable(true)
                 .build();
     }

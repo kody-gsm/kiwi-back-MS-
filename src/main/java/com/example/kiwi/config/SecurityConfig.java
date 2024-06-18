@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers("/login","sign-up").permitAll();
-                    authorize.requestMatchers("/admin/**").hasRole(UserRole.ROLE_ADMIN.name());
+                    authorize.requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name());
                     authorize.anyRequest().authenticated();
 //                    authorize.anyRequest().permitAll();
                 })

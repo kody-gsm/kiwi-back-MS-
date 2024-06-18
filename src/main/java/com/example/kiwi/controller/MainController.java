@@ -3,16 +3,16 @@ package com.example.kiwi.controller;
 import com.example.kiwi.domain.user.SignUpRequest;
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.domain.user.UserDTO;
-import com.example.kiwi.domain.user.UserRole;
-import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.service.UserSer;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -26,17 +26,34 @@ public class MainController {
     private final JavaMailSenderImpl mailSender;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> signUP(@RequestBody SignUpRequest request) {
-        if(userSer.checkLoginID(request.getId())){
-            return ResponseEntity.badRequest().body("이미 그 학번은 사용중입니다.");
+    public ResponseEntity<?> signUP(@Valid @RequestBody SignUpRequest request, BindingResult bindingResult) {
+        if (request.getId() == null){
+            bindingResult.addError(new FieldError("SignUpRequest", "id", "학번이 비어있습니다."));
         }
-        else if(userSer.checkEmail(request.getEmail())){
-            return ResponseEntity.badRequest().body("이미 그 email은 사용입니다.");
+        if (userSer.checkLoginID(request.getId())){
+            bindingResult.addError(new FieldError("SignUpRequest","id","학번이 중복됩니다."));
         }
-        else{
-            userSer.signUp(request);
-            return ResponseEntity.ok("asdf");
+        
+        if (request.getEmail() == null){
+            bindingResult.addError(new FieldError("SignUpRequest","email","이메일이 비어있습니다."));
         }
+        if (userSer.checkEmail(request.getEmail())){
+            bindingResult.addError(new FieldError("SignUpRequest","email","이메일이 중복됩니다."));
+        }
+
+        if (request.getPassword() == null) {
+            bindingResult.addError(new FieldError("SignUpRequest","password","비밀번호가 비어있습니다."));
+        }
+        if (request.getUsername() == null){
+            bindingResult.addError(new FieldError("SignUpRequest","username","이름이 비어있습니다."));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+
+        userSer.signUp(request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/PW-check")
@@ -64,7 +81,5 @@ public class MainController {
         }
     }
 
-//    @PostMapping("/logout")
-//    public ResponseEntity<?> logout(@RequestBody UserDTO userDTO) {
-//    }
+
 }

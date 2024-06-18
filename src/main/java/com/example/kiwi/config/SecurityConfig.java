@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.config.http.UserDetailsServiceFactoryBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
@@ -32,7 +33,7 @@ public class SecurityConfig {
                     formalin.usernameParameter("email");
                     formalin.passwordParameter("password");
 //                    formalin.loginPage("/login");
-//                    formalin.defaultSuccessUrl("/asdf");
+//                    formalin.defaultSuccessUrl("/");
                 })
                 .logout((logout) -> {
                     logout.logoutSuccessUrl("/");
@@ -42,10 +43,16 @@ public class SecurityConfig {
                 })
                 .rememberMe((remember) -> {
                     remember.rememberMeParameter("remember");
+                    remember.alwaysRemember(true);
                 })
                 .sessionManagement((session) -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
                 .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

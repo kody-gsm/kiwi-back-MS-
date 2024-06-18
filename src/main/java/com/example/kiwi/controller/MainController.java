@@ -28,24 +28,28 @@ public class MainController {
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@Valid @RequestBody SignUpRequest request, BindingResult bindingResult) {
         if (request.getId() == null){
-            bindingResult.addError(new FieldError("SignUpRequest", "id", "학번이 비어있습니다."));
+            bindingResult.addError(new FieldError("SignUp", "id", "학번이 비어있습니다."));
         }
+        else if(request.getId() <= 1101 || request.getId() >= 3418){
+            bindingResult.addError(new FieldError("SignUp","id","잘못된 값입니다."));
+        }
+
         if (userSer.checkLoginID(request.getId())){
-            bindingResult.addError(new FieldError("SignUpRequest","id","학번이 중복됩니다."));
+            bindingResult.addError(new FieldError("SignUp","id","학번이 중복됩니다."));
         }
 
         if (request.getEmail() == null){
-            bindingResult.addError(new FieldError("SignUpRequest","email","이메일이 비어있습니다."));
+            bindingResult.addError(new FieldError("SignUp","email","이메일이 비어있습니다."));
         }
         if (userSer.checkEmail(request.getEmail())){
-            bindingResult.addError(new FieldError("SignUpRequest","email","이메일이 중복됩니다."));
+            bindingResult.addError(new FieldError("SignUp","email","이메일이 중복됩니다."));
         }
 
         if (request.getPassword() == null) {
-            bindingResult.addError(new FieldError("SignUpRequest","password","비밀번호가 비어있습니다."));
+            bindingResult.addError(new FieldError("SignUp","password","비밀번호가 비어있습니다."));
         }
         if (request.getUsername() == null){
-            bindingResult.addError(new FieldError("SignUpRequest","username","이름이 비어있습니다."));
+            bindingResult.addError(new FieldError("SignUp","username","이름이 비어있습니다."));
         }
 
         if (bindingResult.hasErrors()) {

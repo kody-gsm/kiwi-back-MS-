@@ -1,5 +1,6 @@
 package com.example.kiwi.domain.user;
 
+import com.example.kiwi.domain.attandance.Attend;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;

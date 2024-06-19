@@ -5,17 +5,14 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.type.descriptor.java.ShortPrimitiveArrayJavaType;
 
 @Entity
 @Table(name = "Attend")
 @NoArgsConstructor
 @Getter
-public class Attendance {
+public class Attend {
     @Id
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Short id;
 
     private Short etc_absent;
     private Short absent;
@@ -33,7 +30,8 @@ public class Attendance {
     private Short dise_leave;
 
     @Builder
-    public Attendance(Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave){
+    public Attend(Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave, Short id){
+        this.id = id;
         this.etc_absent = etc_absent;
         this.absent = absent;
         this.reco_absent = reco_absent;

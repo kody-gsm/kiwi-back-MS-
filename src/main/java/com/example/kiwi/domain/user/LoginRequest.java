@@ -1,12 +1,8 @@
 package com.example.kiwi.domain.user;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 public class LoginRequest {
     private String email;
     private String password;

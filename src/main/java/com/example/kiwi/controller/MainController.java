@@ -1,16 +1,16 @@
 package com.example.kiwi.controller;
 
-import com.example.kiwi.domain.user.PwCheckRequest;
-import com.example.kiwi.domain.user.SignUpRequest;
-import com.example.kiwi.domain.user.User;
+import com.example.kiwi.domain.user.*;
 import com.example.kiwi.service.UserSer;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +50,20 @@ public class MainController {
         if (request.getPassword() == null) {
             bindingResult.addError(new FieldError("SignUp","password","비밀번호가 비어있습니다."));
         }
+        else if(request.getPasswordCheck() == null){
+            bindingResult.addError(new FieldError("SignUp","passwordCheck","비밀번호 확인칸이 비어있습니다."));
+        }
+        else if(!request.getPassword().equals(request.getPasswordCheck())){
+            bindingResult.addError(new FieldError("SignUP","passwordCheck","비밀번호와 일치하지 않습니다."));
+        }
+
+        if (request.getGender() == null){
+            bindingResult.addError(new FieldError("SignUp","gender","성별이 비어있습니다."));
+        }
+        else if (!request.getGender().toString().equals("MAN") && !request.getGender().toString().equals("WOMAN")) {
+            bindingResult.addError(new FieldError("Signup","gender","잘못된 값입니다."));
+        }
+
         if (request.getUsername() == null){
             bindingResult.addError(new FieldError("SignUp","username","이름이 비어있습니다."));
         }
@@ -87,6 +101,30 @@ public class MainController {
         else {
             return ResponseEntity.badRequest().body("데이터와 맞는 값이 없습니다.");
         }
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<?> check(Authentication auth){
+        String email = auth.getName();
+        Optional<User> userdata = userSer.getUserByEmail(email);
+        String name;
+        Short id;
+        UserGender gender;
+        if (userdata.isPresent()){
+            name = userdata.get().getUsername();
+            id = userdata.get().getId();
+            gender = userdata.get().getGender();
+        }
+        else{
+            return ResponseEntity.badRequest().body("사용자의 정보가 없습니다.");
+        }
+
+        CheckRequest response = new CheckRequest();
+        response.setGender(gender);
+        response.setId(id);
+        response.setUsername(name);
+
+        return ResponseEntity.ok(response);
     }
 
 //    @GetMapping("/test")

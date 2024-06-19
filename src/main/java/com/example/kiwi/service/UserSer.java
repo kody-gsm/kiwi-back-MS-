@@ -39,7 +39,10 @@ public class UserSer {
     }
 
     public Optional<User> checkPEI(String email, String name, Short id){
-
         return userRep.findByUsernameAndIdAndEmail(name,id,email);
+    }
+
+    public Optional<User> getUserByEmail(String email){
+        return userRep.findByEmail(email);
     }
 }

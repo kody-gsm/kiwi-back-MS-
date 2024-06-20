@@ -1,6 +1,5 @@
 package com.example.kiwi.controller;
 
-import com.example.kiwi.domain.attandance.AttendData;
 import com.example.kiwi.domain.user.*;
 import com.example.kiwi.service.AttendSer;
 import com.example.kiwi.service.UserSer;
@@ -17,8 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-
-@CrossOrigin(origins = "http://localhost:3000/", allowCredentials = "true", methods = {RequestMethod.GET, RequestMethod.POST})
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "false", methods = {RequestMethod.GET, RequestMethod.POST})
 @RestController
 @Transactional
 @RequiredArgsConstructor

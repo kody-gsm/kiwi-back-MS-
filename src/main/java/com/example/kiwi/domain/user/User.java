@@ -1,5 +1,6 @@
 package com.example.kiwi.domain.user;
 
+import com.example.kiwi.domain.attandance.Attend;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,20 +23,20 @@ public class User {
     @Column(length = 6)
     private String email;
 
-    @Column(nullable = false)
-    private Boolean enable/* = true*/;
-
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Enumerated(EnumType.STRING)
+    private UserGender gender;
+
     @Builder
-    public User(Short ID,String username, String password, String email, Boolean enable, UserRole role) {
+    public User(Short ID,String username, String password, String email, UserRole role, UserGender gender) {
         this.id = ID;
         this.username = username;
         this.password = password;
         this.email = email;
-        this.enable = enable;
         this.role = role;
+        this.gender = gender;
     }
 }
 

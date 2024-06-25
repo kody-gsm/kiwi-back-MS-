@@ -36,7 +36,7 @@ public class Attend {
     private Short dise_leave;
 
     @Builder
-    public Attend(User user, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave, Short id){
+    public Attend(User user, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave){
         this.id = new AttendId(user.getId());
         this.user = user;
         this.etc_absent = etc_absent;

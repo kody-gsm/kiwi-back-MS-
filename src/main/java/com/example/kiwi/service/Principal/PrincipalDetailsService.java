@@ -1,4 +1,4 @@
-package com.example.kiwi.service;
+package com.example.kiwi.service.Principal;
 
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.repository.UserRep;

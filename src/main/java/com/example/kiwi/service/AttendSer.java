@@ -3,20 +3,25 @@ package com.example.kiwi.service;
 import com.example.kiwi.domain.attandance.Attend;
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.repository.AttendRep;
+import com.example.kiwi.repository.UserRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class AttendSer {
     private final AttendRep attendRep;
+    private final UserRep userRep;
 
     public void CreateAttendance(Short id) {
+        User user = userRep.findUserById(id);
         Attend attend = attendRep.save(
                 Attend.builder()
-                        .id(id)
+                        .user(user)
                         .absent((short) 0)
                         .dise_absent((short) 0)
                         .etc_absent((short) 0)

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "User")
 @NoArgsConstructor
@@ -28,6 +31,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private UserGender gender;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Attend> attends = new ArrayList<>();
+
 
     @Builder
     public User(Short ID,String username, String password, String email, UserRole role, UserGender gender) {

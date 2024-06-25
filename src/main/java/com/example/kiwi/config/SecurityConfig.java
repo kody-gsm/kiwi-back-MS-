@@ -1,8 +1,8 @@
 package com.example.kiwi.config;
 
 import com.example.kiwi.domain.user.UserRole;
-import com.example.kiwi.service.AuthenFailHandler;
-import com.example.kiwi.service.AuthenSuccessHandler;
+import com.example.kiwi.service.Authen.AuthenFailHandler;
+import com.example.kiwi.service.Authen.AuthenSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,7 +52,7 @@ public class SecurityConfig {
                 })
                 .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(String.valueOf(HttpMethod.GET), String.valueOf(HttpMethod.POST),"/login","sign-up","PW-check").permitAll();
+                    authorize.requestMatchers("/login","sign-up","PW-check","check").permitAll();
                     authorize.requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name());
                     authorize.anyRequest().authenticated();
                 })

@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "false", methods = {RequestMethod.GET, RequestMethod.POST})
@@ -68,41 +69,28 @@ public class MainController {
 
     @GetMapping("/check")
     public ResponseEntity<?> checkG(Authentication auth){
-        String email = auth.getName();
-        Optional<User> userdata = userSer.getUserByEmail(email);
-        String name;
-        Short id;
-        UserGender gender;
-        if (userdata.isPresent()){
-            name = userdata.get().getUsername();
-            id = userdata.get().getId();
-            gender = userdata.get().getGender();
+        if(auth == null){
+            return ResponseEntity.badRequest().body(null);
         }
-        else{
-            return ResponseEntity.badRequest().body("사용자의 정보가 없습니다.");
+        else {
+            String email = auth.getName();
+            Optional<User> userdata = userSer.getUserByEmail(email);
+            if (userdata.isPresent()){
+                String name = userdata.get().getUsername();
+                Short id = userdata.get().getId();
+                UserGender gender = userdata.get().getGender();
+                CheckRequest response = new CheckRequest();
+                response.setGender(gender);
+                response.setId(id);
+                response.setUsername(name);
+                return ResponseEntity.ok(response);
+            }
+            return ResponseEntity.badRequest().body("DB에 존재하지 않습니다.");
         }
-
-        CheckRequest response = new CheckRequest();
-        response.setGender(gender);
-        response.setId(id);
-        response.setUsername(name);
-
-        return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/check")
+//    @GetMapping("/check")
 //    public ResponseEntity<?> checkP(){
 //
 //    }
-
-//    @GetMapping("/test")
-//    public String test(@RequestParam String password){
-//        if (passwordEncoder.matches("",password)) {
-//            return "asdf";
-//        }
-//        else {
-//            return "qwer";
-//        }
-//    }
-
 }

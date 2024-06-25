@@ -88,7 +88,7 @@ public class MainController {
         }
     }
 
-//    @GetMapping("/check")
+//    @PostMapping("/check")
 //    public ResponseEntity<?> checkP(){
 //
 //    }

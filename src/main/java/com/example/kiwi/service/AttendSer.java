@@ -34,6 +34,7 @@ public class AttendSer {
                         .dise_leave((short) 0)
                         .etc_leave((short) 0)
                         .reco_leave((short) 0)
+                        .attendance((short) 0)
                         .build()
         );
     }

@@ -20,6 +20,8 @@ public class Attend {
     @MapsId("id")
     private User user;
 
+    private Short attendance;
+
     private Short etc_absent;
     private Short absent;
     private Short reco_absent;
@@ -36,7 +38,7 @@ public class Attend {
     private Short dise_leave;
 
     @Builder
-    public Attend(User user, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave){
+    public Attend(User user, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave, Short attendance){
         this.id = new AttendId(user.getId());
         this.user = user;
         this.etc_absent = etc_absent;
@@ -51,5 +53,6 @@ public class Attend {
         this.dise_leave = dise_leave;
         this.etc_leave = etc_leave;
         this.reco_leave = reco_leave;
+        this.attendance = attendance;
     }
 }

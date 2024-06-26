@@ -1,4 +1,4 @@
-package com.example.kiwi.domain.attandance;
+package com.example.kiwi.domain.attendance;
 
 import com.example.kiwi.domain.user.User;
 import jakarta.persistence.*;
@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class Attend {
-
     @EmbeddedId
     private AttendId id;
 

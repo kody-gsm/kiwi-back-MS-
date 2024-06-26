@@ -1,14 +1,12 @@
-package com.example.kiwi.service;
+package com.example.kiwi.service.domainSer;
 
-import com.example.kiwi.domain.attandance.Attend;
+import com.example.kiwi.domain.attendance.Attend;
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.repository.AttendRep;
 import com.example.kiwi.repository.UserRep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor

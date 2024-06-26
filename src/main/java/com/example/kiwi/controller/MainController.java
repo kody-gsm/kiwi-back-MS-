@@ -1,8 +1,9 @@
 package com.example.kiwi.controller;
 
 import com.example.kiwi.domain.user.*;
-import com.example.kiwi.service.AttendSer;
-import com.example.kiwi.service.UserSer;
+import com.example.kiwi.service.domainSer.AttendSer;
+import com.example.kiwi.service.domainSer.SelectionSer;
+import com.example.kiwi.service.domainSer.UserSer;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class MainController {
 
     private final UserSer userSer;
     private final AttendSer attendSer;
+    private final SelectionSer selectionSer;
     private final JavaMailSenderImpl mailSender;
 
     @PostMapping("/sign-up")
@@ -36,6 +38,7 @@ public class MainController {
 
         userSer.signUp(request);
         attendSer.CreateAttendance(request.getId());
+        selectionSer.create(request.getId());
 
         return ResponseEntity.status(HttpStatus.CREATED).body("생성되었습니다.");
     }

@@ -1,4 +1,4 @@
-package com.example.kiwi.domain.attandance;
+package com.example.kiwi.domain.attendance;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

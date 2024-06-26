@@ -1,6 +1,7 @@
 package com.example.kiwi.domain.user;
 
-import com.example.kiwi.domain.attandance.Attend;
+import com.example.kiwi.domain.attendance.Attend;
+import com.example.kiwi.domain.selection.Selection;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,6 +36,8 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Attend> attends = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "user")
+    private List<Selection> selection = new ArrayList<>();
 
     @Builder
     public User(Short ID,String username, String password, String email, UserRole role, UserGender gender) {

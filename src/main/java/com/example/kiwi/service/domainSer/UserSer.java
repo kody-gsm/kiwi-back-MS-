@@ -1,4 +1,4 @@
-package com.example.kiwi.service;
+package com.example.kiwi.service.domainSer;
 
 import com.example.kiwi.domain.user.SignUpRequest;
 import com.example.kiwi.domain.user.User;

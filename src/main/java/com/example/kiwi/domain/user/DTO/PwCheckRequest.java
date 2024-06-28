@@ -1,4 +1,4 @@
-package com.example.kiwi.domain.user;
+package com.example.kiwi.domain.user.DTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

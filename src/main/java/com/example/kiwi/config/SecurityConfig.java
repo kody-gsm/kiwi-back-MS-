@@ -1,12 +1,12 @@
 package com.example.kiwi.config;
 
+import com.example.kiwi.Env;
 import com.example.kiwi.domain.user.UserRole;
 import com.example.kiwi.service.Authen.AuthenFailHandler;
 import com.example.kiwi.service.Authen.AuthenSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -30,11 +30,14 @@ public class SecurityConfig {
     @Autowired
     private AuthenFailHandler authenFailHandler;
 
+    @Autowired
+    private Env env;
+
     @Bean
     public CorsConfigurationSource configurationSource(){
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000","https://9927-210-218-52-13.ngrok-free.app"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000",env.getUrl()));
         config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
         config.setAllowedHeaders(List.of("*"));
 //        config.setAllowCredentials(true);
@@ -52,7 +55,7 @@ public class SecurityConfig {
                 })
                 .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers("/login","sign-up","PW-check","check").permitAll();
+                    authorize.requestMatchers("/login","sign-up","PW-check","check","filter").permitAll();
                     authorize.requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name());
                     authorize.anyRequest().authenticated();
                 })

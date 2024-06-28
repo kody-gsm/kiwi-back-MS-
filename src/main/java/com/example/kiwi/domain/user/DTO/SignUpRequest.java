@@ -1,5 +1,8 @@
-package com.example.kiwi.domain.user;
+package com.example.kiwi.domain.user.DTO;
 
+import com.example.kiwi.domain.user.User;
+import com.example.kiwi.domain.user.UserGender;
+import com.example.kiwi.domain.user.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

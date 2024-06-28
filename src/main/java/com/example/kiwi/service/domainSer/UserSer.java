@@ -1,6 +1,6 @@
 package com.example.kiwi.service.domainSer;
 
-import com.example.kiwi.domain.user.SignUpRequest;
+import com.example.kiwi.domain.user.DTO.SignUpRequest;
 import com.example.kiwi.domain.user.User;
 import com.example.kiwi.repository.UserRep;
 import com.example.kiwi.repository.mapper.UserMapper;

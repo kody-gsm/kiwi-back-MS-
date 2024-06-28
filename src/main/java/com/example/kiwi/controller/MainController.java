@@ -1,12 +1,17 @@
 package com.example.kiwi.controller;
 
+import com.example.kiwi.domain.selection.DTO.FilterRequest;
 import com.example.kiwi.domain.user.*;
+import com.example.kiwi.domain.user.DTO.CheckRequest;
+import com.example.kiwi.domain.user.DTO.PwCheckRequest;
+import com.example.kiwi.domain.user.DTO.SignUpRequest;
 import com.example.kiwi.service.domainSer.AttendSer;
 import com.example.kiwi.service.domainSer.SelectionSer;
 import com.example.kiwi.service.domainSer.UserSer;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -91,8 +96,8 @@ public class MainController {
         }
     }
 
-//    @PostMapping("/check")
-//    public ResponseEntity<?> checkP(){
-//
-//    }
+    @PostMapping("/filter")
+    public ResponseEntity<?> checkP(@RequestBody FilterRequest request){
+        return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
+    }
 }

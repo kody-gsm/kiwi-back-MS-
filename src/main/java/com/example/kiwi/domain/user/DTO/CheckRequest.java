@@ -1,5 +1,6 @@
-package com.example.kiwi.domain.user;
+package com.example.kiwi.domain.user.DTO;
 
+import com.example.kiwi.domain.user.UserGender;
 import lombok.Data;
 
 @Data

@@ -29,7 +29,6 @@ public class SecurityConfig {
     private AuthenSuccessHandler authenSuccessHandler;
     @Autowired
     private AuthenFailHandler authenFailHandler;
-
     @Autowired
     private Env env;
 
@@ -40,7 +39,6 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList("http://localhost:3000",env.getUrl()));
         config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
         config.setAllowedHeaders(List.of("*"));
-//        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -55,7 +53,7 @@ public class SecurityConfig {
                 })
                 .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers("/login","sign-up","PW-check","check","filter").permitAll();
+                    authorize.requestMatchers("/login","sign-up","PW-check","check").permitAll();
                     authorize.requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name());
                     authorize.anyRequest().authenticated();
                 })

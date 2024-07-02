@@ -1,5 +1,6 @@
 package com.example.kiwi.controller;
 
+import com.example.kiwi.domain.attendance.Attend;
 import com.example.kiwi.domain.selection.DTO.FilterRequest;
 import com.example.kiwi.domain.user.*;
 import com.example.kiwi.domain.user.DTO.CheckRequest;
@@ -60,7 +61,7 @@ public class MainController {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(email);
                 message.setSubject("비밀번호와 관련하여");
-                message.setText("비밀번호를 바꾸시려면 이 링크에"+"들어가십시요.");
+                message.setText("비밀번호를 바꾸시려면 이 링크"+"에"+"들어가십시요.");
                 mailSender.send(message);
                 return ResponseEntity.ok("성공적으로 보냈습니다.");
             }
@@ -73,8 +74,8 @@ public class MainController {
         }
     }
 
-    @GetMapping("/check")
-    public ResponseEntity<?> checkG(Authentication auth){
+    @PostMapping("/check")
+    public ResponseEntity<?> check(Authentication auth){
         if(auth == null){
             return ResponseEntity.badRequest().body(null);
         }
@@ -84,19 +85,43 @@ public class MainController {
             if (userdata.isPresent()){
                 String name = userdata.get().getUsername();
                 Short id = userdata.get().getId();
+                Optional<CheckRequest> userAttend = attendSer.SelectAttendance(id);
                 UserGender gender = userdata.get().getGender();
-                CheckRequest response = new CheckRequest();
-                response.setGender(gender);
-                response.setId(id);
-                response.setUsername(name);
-                return ResponseEntity.ok(response);
+                if (userAttend.isPresent()){
+                    CheckRequest response = CheckRequest.builder()
+                            .attendance(userAttend.get().getAttendance())
+
+                            .absent(userAttend.get().getAbsent())
+                            .etc_absent(userAttend.get().getEtc_absent())
+                            .reco_absent(userAttend.get().getReco_absent())
+                            .dise_absent(userAttend.get().getDise_absent())
+
+                            .late(userAttend.get().getLate())
+                            .etc_late(userAttend.get().getEtc_late())
+                            .reco_late(userAttend.get().getReco_late())
+                            .dise_late(userAttend.get().getDise_absent())
+
+                            .early_leave(userAttend.get().getEarly_leave())
+                            .etc_leave(userAttend.get().getEtc_leave())
+                            .reco_leave(userAttend.get().getReco_leave())
+                            .dise_leave(userAttend.get().getDise_leave())
+
+                            .gender(gender)
+                            .username(name)
+                            .id(id)
+                            .build();
+                    return ResponseEntity.ok(response);
+                }
+                else {
+                    return ResponseEntity.badRequest().body("출석 데이터가 없습니다.");
+                }
             }
             return ResponseEntity.badRequest().body("DB에 존재하지 않습니다.");
         }
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<?> checkP(@RequestBody FilterRequest request){
+    public ResponseEntity<?> filter(@RequestBody FilterRequest request){
         return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
     }
 }

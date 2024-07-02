@@ -4,10 +4,12 @@ import com.example.kiwi.domain.selection.DTO.FilterResponse;
 import com.example.kiwi.domain.selection.SelectionMode;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Mapper
+@Transactional
 public interface FilterMapper {
     @Select("SELECT u.gender,u.username,u.id,s.mode FROM user u NATURAL JOIN selection s WHERE mode = #{mode} AND u.id >= #{id} AND u.id <= #{id}+418")
     List<FilterResponse> getFilterGrade(SelectionMode mode, Short id);

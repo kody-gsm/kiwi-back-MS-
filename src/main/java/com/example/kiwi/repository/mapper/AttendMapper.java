@@ -10,6 +10,6 @@ import java.util.Optional;
 @Mapper
 @Transactional
 public interface AttendMapper {
-    @Select("SELECT attendance,etc_absent,absent,reco_absent,dise_absent,etc_late,late,reco_late,dise_late,etc_leave,early_leave,reco_leave,dise_leave FROM Attend WHERE id = #{id} AND time = (SELECT MAX(a.time) FROM Attend a WHERE a.id = #{id})")
+    @Select("SELECT attendance,etc_absent,absent,reco_absent,dise_absent,etc_late,late,reco_late,dise_late,etc_leave,early_leave,reco_leave,dise_leave,outing,reco_outing,dise_outing,etc_outing FROM Attend WHERE id = #{id} AND time = (SELECT MAX(a.time) FROM Attend a WHERE a.id = #{id})")
     Optional<CheckRequest> findAttendanceById(Short id);
 }

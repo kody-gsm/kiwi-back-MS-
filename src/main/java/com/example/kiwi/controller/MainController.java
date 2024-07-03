@@ -1,12 +1,12 @@
 package com.example.kiwi.controller;
 
-import com.example.kiwi.domain.attendance.Attend;
 import com.example.kiwi.domain.selection.DTO.FilterRequest;
 import com.example.kiwi.domain.user.*;
 import com.example.kiwi.domain.user.DTO.CheckRequest;
 import com.example.kiwi.domain.user.DTO.PwCheckRequest;
 import com.example.kiwi.domain.user.DTO.SignUpRequest;
 import com.example.kiwi.service.domainSer.AttendSer;
+import com.example.kiwi.service.domainSer.CheckSer;
 import com.example.kiwi.service.domainSer.SelectionSer;
 import com.example.kiwi.service.domainSer.UserSer;
 import jakarta.transaction.Transactional;
@@ -32,6 +32,7 @@ public class MainController {
     private final AttendSer attendSer;
     private final SelectionSer selectionSer;
     private final JavaMailSenderImpl mailSender;
+    private final CheckSer checkSer;
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@Valid @RequestBody SignUpRequest request, BindingResult bindingResult) {
@@ -87,34 +88,7 @@ public class MainController {
                 Short id = userdata.get().getId();
                 Optional<CheckRequest> userAttend = attendSer.SelectAttendance(id);
                 UserGender gender = userdata.get().getGender();
-                if (userAttend.isPresent()){
-                    CheckRequest response = CheckRequest.builder()
-                            .attendance(userAttend.get().getAttendance())
-
-                            .absent(userAttend.get().getAbsent())
-                            .etc_absent(userAttend.get().getEtc_absent())
-                            .reco_absent(userAttend.get().getReco_absent())
-                            .dise_absent(userAttend.get().getDise_absent())
-
-                            .late(userAttend.get().getLate())
-                            .etc_late(userAttend.get().getEtc_late())
-                            .reco_late(userAttend.get().getReco_late())
-                            .dise_late(userAttend.get().getDise_absent())
-
-                            .early_leave(userAttend.get().getEarly_leave())
-                            .etc_leave(userAttend.get().getEtc_leave())
-                            .reco_leave(userAttend.get().getReco_leave())
-                            .dise_leave(userAttend.get().getDise_leave())
-
-                            .gender(gender)
-                            .username(name)
-                            .id(id)
-                            .build();
-                    return ResponseEntity.ok(response);
-                }
-                else {
-                    return ResponseEntity.badRequest().body("출석 데이터가 없습니다.");
-                }
+                return ResponseEntity.ok(checkSer.checkSelcet(userAttend,id,name,gender));
             }
             return ResponseEntity.badRequest().body("DB에 존재하지 않습니다.");
         }

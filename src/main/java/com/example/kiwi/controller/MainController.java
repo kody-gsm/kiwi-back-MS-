@@ -98,9 +98,4 @@ public class MainController {
     public ResponseEntity<?> filter(@RequestBody FilterRequest request){
         return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
     }
-
-    @PostMapping("/test")
-    public String filter(){
-        return "asdf";
-    }
 }

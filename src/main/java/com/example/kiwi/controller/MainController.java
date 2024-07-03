@@ -75,7 +75,7 @@ public class MainController {
         }
     }
 
-    @PostMapping("/check")
+    @GetMapping("/check")
     public ResponseEntity<?> check(Authentication auth){
         if(auth == null){
             return ResponseEntity.badRequest().body(null);

@@ -98,4 +98,8 @@ public class MainController {
     public ResponseEntity<?> filter(@RequestBody FilterRequest request){
         return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
     }
+
+    public void test(){
+
+    }
 }

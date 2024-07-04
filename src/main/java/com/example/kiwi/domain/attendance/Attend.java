@@ -36,10 +36,10 @@ public class Attend {
     private Short reco_leave; //인정 조퇴
     private Short dise_leave; //질병 조퇴
 
-    private Short etc_outing; //기타 외출
-    private Short outing; //외출
-    private Short reco_outing; //인정 외출
-    private Short dise_outing; //질병 외출
+    private Short etc_outing;
+    private Short outing;
+    private Short reco_outing;
+    private Short dise_outing;
 
     @Builder
     public Attend(User user, Short etc_absent, Short absent, Short reco_absent, Short dise_absent, Short etc_late, Short late, Short dise_late, Short reco_late, Short early_leave, Short dise_leave, Short etc_leave, Short reco_leave, Short attendance,Short outing,Short dise_outing,Short reco_outing,Short etc_outing){

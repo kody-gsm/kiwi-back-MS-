@@ -1,10 +1,9 @@
 package com.example.kiwi.config;
 
-import com.example.kiwi.Env;
 import com.example.kiwi.domain.user.UserRole;
 import com.example.kiwi.service.Authen.AuthenFailHandler;
 import com.example.kiwi.service.Authen.AuthenSuccessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,26 +16,23 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private AuthenSuccessHandler authenSuccessHandler;
-    @Autowired
-    private AuthenFailHandler authenFailHandler;
-    @Autowired
-    private Env env;
+    private final AuthenSuccessHandler authenSuccessHandler;
+    private final AuthenFailHandler authenFailHandler;
 
     @Bean
     public CorsConfigurationSource configurationSource(){
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000",env.getUrl()));
+        config.setAllowedHeaders(Collections.singletonList("*"));
         config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -79,7 +75,6 @@ public class SecurityConfig {
                 })
                 .build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

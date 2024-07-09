@@ -1,6 +1,7 @@
 package com.example.kiwi.controller;
 
 import com.example.kiwi.domain.notice.Notice;
+import com.example.kiwi.domain.notice.DTO.NoticeRequest;
 import com.example.kiwi.domain.selection.DTO.FilterRequest;
 import com.example.kiwi.domain.user.*;
 import com.example.kiwi.domain.user.DTO.CheckRequest;
@@ -20,6 +21,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -104,34 +106,35 @@ public class MainController {
         return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
     }
 
-    // Notice 관련 엔드포인트
-    @GetMapping("/notices")
-    public List<Notice> getAllNotices() {
-        return noticeService.getAllNotices();
-    }
-
-    @GetMapping("/notices/{id}")
-    public ResponseEntity<Notice> getNoticeById(@PathVariable Long id) {
-        Optional<Notice> notice = noticeService.getNoticeById(id);
-        return notice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/notices")
-    public ResponseEntity<Notice> createNotice(@RequestBody Notice notice) {
+    // 공지사항 생성
+    @PostMapping
+    public ResponseEntity<?> createNotice(@Valid @RequestBody Notice notice) {
         Notice createdNotice = noticeService.createNotice(notice);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
     }
 
-    @PutMapping("/notices/{id}")
-    public ResponseEntity<Notice> updateNotice(@PathVariable Long id, @RequestBody Notice noticeDetails) {
-        Notice updatedNotice = noticeService.updateNotice(id, noticeDetails);
-        return ResponseEntity.ok(updatedNotice);
+    // 공지사항 수정
+    @PutMapping("notices/{id}")
+    public ResponseEntity<?> updateNotice(@PathVariable Long id, @Valid @RequestBody Notice noticeDetails) {
+        try {
+            Notice updatedNotice = noticeService.updateNotice(id, noticeDetails);
+            return ResponseEntity.ok(updatedNotice);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    @DeleteMapping("/notices/{id}")
-    public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
+    // 공지사항 조회
+    @GetMapping("notices/{id}")
+    public ResponseEntity<?> getNotice(@PathVariable Long id) {
+        Optional<Notice> notice = noticeService.getNoticeById(id);
+        return notice.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+
+    // 공지사항 삭제
+    @DeleteMapping("notices/{id}")
+    public ResponseEntity<?> deleteNotice(@PathVariable Long id) {
         noticeService.deleteNotice(id);
         return ResponseEntity.noContent().build();
     }
-
 }

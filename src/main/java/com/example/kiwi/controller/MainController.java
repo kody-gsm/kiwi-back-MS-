@@ -104,7 +104,7 @@ public class MainController {
         return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
     }
 
-
+    // Notice 관련 엔드포인트
     @GetMapping("/notices")
     public List<Notice> getAllNotices() {
         return noticeService.getAllNotices();
@@ -112,31 +112,26 @@ public class MainController {
 
     @GetMapping("/notices/{id}")
     public ResponseEntity<Notice> getNoticeById(@PathVariable Long id) {
-        Notice notice = noticeService.getNoticeById(id);
-        return ResponseEntity.ok(notice);
+        Optional<Notice> notice = noticeService.getNoticeById(id);
+        return notice.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("/notices")
-    public ResponseEntity<?> createNotice(@Valid @RequestBody Notice notice, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-        }
+    public ResponseEntity<Notice> createNotice(@RequestBody Notice notice) {
         Notice createdNotice = noticeService.createNotice(notice);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
     }
 
     @PutMapping("/notices/{id}")
-    public ResponseEntity<?> updateNotice(@PathVariable Long id, @Valid @RequestBody Notice notice, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-        }
-        Notice updatedNotice = noticeService.updateNotice(id, notice);
+    public ResponseEntity<Notice> updateNotice(@PathVariable Long id, @RequestBody Notice noticeDetails) {
+        Notice updatedNotice = noticeService.updateNotice(id, noticeDetails);
         return ResponseEntity.ok(updatedNotice);
     }
 
     @DeleteMapping("/notices/{id}")
-    public ResponseEntity<?> deleteNotice(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long id) {
         noticeService.deleteNotice(id);
         return ResponseEntity.noContent().build();
     }
+
 }

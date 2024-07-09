@@ -1,12 +1,13 @@
 package com.example.kiwi.controller;
 
+import com.example.kiwi.domain.notice.Notice;
 import com.example.kiwi.domain.selection.DTO.FilterRequest;
 import com.example.kiwi.domain.user.*;
 import com.example.kiwi.domain.user.DTO.CheckRequest;
 import com.example.kiwi.domain.user.DTO.PwCheckRequest;
 import com.example.kiwi.domain.user.DTO.SignUpRequest;
 import com.example.kiwi.service.domainSer.AttendSer;
-import com.example.kiwi.service.domainSer.CheckSer;
+import com.example.kiwi.service.domainSer.NoticeService;
 import com.example.kiwi.service.domainSer.SelectionSer;
 import com.example.kiwi.service.domainSer.UserSer;
 import jakarta.transaction.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "false", methods = {RequestMethod.GET, RequestMethod.POST})
@@ -32,7 +34,7 @@ public class MainController {
     private final AttendSer attendSer;
     private final SelectionSer selectionSer;
     private final JavaMailSenderImpl mailSender;
-    private final CheckSer checkSer;
+    private final NoticeService noticeService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUP(@Valid @RequestBody SignUpRequest request, BindingResult bindingResult) {
@@ -62,7 +64,7 @@ public class MainController {
                 SimpleMailMessage message = new SimpleMailMessage();
                 message.setTo(email);
                 message.setSubject("비밀번호와 관련하여");
-                message.setText("비밀번호를 바꾸시려면 이 링크"+"에"+"들어가십시요.");
+                message.setText("비밀번호를 바꾸시려면 이 링크에"+"들어가십시요.");
                 mailSender.send(message);
                 return ResponseEntity.ok("성공적으로 보냈습니다.");
             }
@@ -76,7 +78,7 @@ public class MainController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<?> check(Authentication auth){
+    public ResponseEntity<?> checkG(Authentication auth){
         if(auth == null){
             return ResponseEntity.badRequest().body(null);
         }
@@ -86,16 +88,55 @@ public class MainController {
             if (userdata.isPresent()){
                 String name = userdata.get().getUsername();
                 Short id = userdata.get().getId();
-                Optional<CheckRequest> userAttend = attendSer.SelectAttendance(id);
                 UserGender gender = userdata.get().getGender();
-                return ResponseEntity.ok(checkSer.checkSelcet(userAttend,id,name,gender));
+                CheckRequest response = new CheckRequest();
+                response.setGender(gender);
+                response.setId(id);
+                response.setUsername(name);
+                return ResponseEntity.ok(response);
             }
             return ResponseEntity.badRequest().body("DB에 존재하지 않습니다.");
         }
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<?> filter(@RequestBody FilterRequest request){
+    public ResponseEntity<?> checkP(@RequestBody FilterRequest request){
         return ResponseEntity.ok(selectionSer.findByIdAndMode(request.getId(),request.getMode()));
+    }
+
+
+    @GetMapping("/notices")
+    public List<Notice> getAllNotices() {
+        return noticeService.getAllNotices();
+    }
+
+    @GetMapping("/notices/{id}")
+    public ResponseEntity<Notice> getNoticeById(@PathVariable Long id) {
+        Notice notice = noticeService.getNoticeById(id);
+        return ResponseEntity.ok(notice);
+    }
+
+    @PostMapping("/notices")
+    public ResponseEntity<?> createNotice(@Valid @RequestBody Notice notice, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+        Notice createdNotice = noticeService.createNotice(notice);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdNotice);
+    }
+
+    @PutMapping("/notices/{id}")
+    public ResponseEntity<?> updateNotice(@PathVariable Long id, @Valid @RequestBody Notice notice, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
+        }
+        Notice updatedNotice = noticeService.updateNotice(id, notice);
+        return ResponseEntity.ok(updatedNotice);
+    }
+
+    @DeleteMapping("/notices/{id}")
+    public ResponseEntity<?> deleteNotice(@PathVariable Long id) {
+        noticeService.deleteNotice(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -1,9 +1,10 @@
 package com.example.kiwi.config;
 
+import com.example.kiwi.Env;
 import com.example.kiwi.domain.user.UserRole;
 import com.example.kiwi.service.Authen.AuthenFailHandler;
 import com.example.kiwi.service.Authen.AuthenSuccessHandler;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,20 +23,22 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthenSuccessHandler authenSuccessHandler;
-    private final AuthenFailHandler authenFailHandler;
+    @Autowired
+    private AuthenSuccessHandler authenSuccessHandler;
+    @Autowired
+    private AuthenFailHandler authenFailHandler;
+    @Autowired
+    private Env env;
 
     @Bean
-    public CorsConfigurationSource configurationSource(){
+    public CorsConfigurationSource configurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(List.of("*"));
-        config.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", env.getUrl()));
+        config.setAllowedMethods(Arrays.asList("HEAD", "POST", "GET", "DELETE", "PUT"));
         config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
@@ -48,10 +51,11 @@ public class SecurityConfig {
                 .cors(cors -> {
                     cors.configurationSource(configurationSource());
                 })
-                .csrf(AbstractHttpConfigurer::disable)//csrf 공격 꺼두기
+                .csrf(AbstractHttpConfigurer::disable) // csrf 공격 꺼두기
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers("/login","sign-up","PW-check","filter").permitAll();
+                    authorize.requestMatchers("/login", "/sign-up", "/PW-check", "/check").permitAll();
                     authorize.requestMatchers("/admin/**").hasRole(UserRole.ADMIN.name());
+                    authorize.requestMatchers("/notices/**").hasRole(UserRole.ADMIN.name()); // 공지사항 엔드포인트 보호
                     authorize.anyRequest().authenticated();
                 })
                 .formLogin((formalin) -> {

@@ -9,6 +9,5 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface SelectionRep extends JpaRepository<Selection, Long> {
-
+public interface SelectionRep extends JpaRepository<Selection, Integer> {
 }
